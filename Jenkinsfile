@@ -3,6 +3,9 @@ pipeline {
     environment {
         PATH = "$PATH:/usr/share/maven/bin"
     }
+    options {
+      disableConcurrentBuilds abortPrevious: true
+    }
     stages {
         stage('GitHub') {
             options {
