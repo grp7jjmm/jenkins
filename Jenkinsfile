@@ -51,6 +51,10 @@ pipeline {
                 script{
                     currentBuild.keepLog = true
                 }
+                dir("/apache-jmeter-5.5/bin"){
+                    sh "sh jmeter -n -t jenkins.jmx -l /apache-jmeter-5.5/reports/csv/Jenkins-Report.csv"
+                    sh "sh jmeter -g /apache-jmeter-5.5/reports/csv/Jenkins-Report.csv -o /apache-jmeter-5.5/reports/html/Jenkins-Report"
+                }
             }
         }            
     }
