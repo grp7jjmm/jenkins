@@ -26,7 +26,7 @@ pipeline {
         
         stage('Build') {
             steps {
-                sh 'mvn package'
+                sh 'mvn compile war:war'
                 sh 'mvn install checkstyle:checkstyle findbugs:findbugs pmd:pmd'
             }
         }
@@ -34,8 +34,6 @@ pipeline {
         stage('Test') {
                
             steps{
-                
-                
                 withSonarQubeEnv('SonarQube') { 
         // If you have configured more than one global server connection, you can specify its name
         //      sh "${scannerHome}/bin/sonar-scanner"
@@ -45,8 +43,8 @@ pipeline {
                     enabledForFailure: true, aggregatingResults: true, 
                     tools: [java(), checkStyle(), findBugs(), pmdParser()]
                 )
-                sh 'contrast auth'
-                sh 'contrast scan'
+                //sh 'contrast auth'
+                //sh 'contrast scan'
             }
         }
         
