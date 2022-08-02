@@ -26,7 +26,9 @@ pipeline {
         
         stage('Build') {
             steps {
-                sh 'mvn package'
+                dir ("/var/lib/jenkins/workspace/Input/target"){
+                    sh "./mvn_war.sh"
+                }
                 sh 'mvn install checkstyle:checkstyle findbugs:findbugs pmd:pmd'
             }
         }
