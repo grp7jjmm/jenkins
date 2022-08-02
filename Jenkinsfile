@@ -19,7 +19,7 @@ pipeline {
                 }
                 git "${env.URL}"
                 //snykSecurity additionalArguments: '-d', snykInstallation: 'Snyk', snykTokenId: '813bd878-dd5a-414c-b3e4-d7e300a5f2f1'
-                dependencyCheck additionalArguments: '--scan pom.xml --out /dcheck_reports', odcInstallation: 'Dependency-Check'
+                //dependencyCheck additionalArguments: '--scan pom.xml --out /dcheck_reports', odcInstallation: 'Dependency-Check'
 
             }
         }
@@ -29,6 +29,7 @@ pipeline {
                 dir ("/var/lib/jenkins/workspace/Input/target"){
                     sh "./mvn_war.sh"
                 }
+                sh 'mvn package'
                 sh 'mvn install checkstyle:checkstyle findbugs:findbugs pmd:pmd'
             }
         }
