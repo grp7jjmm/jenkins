@@ -7,7 +7,32 @@ pipeline {
     options {
       disableConcurrentBuilds abortPrevious: true
     }
-    step([$class: 'CxScanBuilder', comment: '', configAsCode: true, credentialsId: '4550c17f-8422-4d35-bccb-02e907259154', customFields: '', excludeFolders: '', exclusionsSetting: 'global', failBuildOnNewResults: false, failBuildOnNewSeverity: 'HIGH', filterPattern: '''!**/_cvs/**/*, !**/.svn/**/*, !**/.hg/**/*, !**/.git/**/*, !**/.bzr/**/*,
+    
+    stages {
+        stage('GitHub') {
+            options {
+                timeout(time: 1, unit: 'MINUTES')
+            }
+            steps {
+                script {
+                    env.URL = input message: 'Place your Github Repository here:', parameters: [string(defaultValue: '', name: 'Repository URL')]
+                }
+                git "${env.URL}"
+                //snykSecurity additionalArguments: '-d', snykInstallation: 'Snyk', snykTokenId: '813bd878-dd5a-414c-b3e4-d7e300a5f2f1'
+                //dependencyCheck additionalArguments: '--scan pom.xml --out /dcheck_reports', odcInstallation: 'Dependency-Check'
+
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                sh 'mvn package'
+                sh 'mvn install checkstyle:checkstyle findbugs:findbugs pmd:pmd'
+            }
+        }
+        
+        stage('Test') {
+            steps([$class: 'CxScanBuilder', comment: '', configAsCode: true, credentialsId: '4550c17f-8422-4d35-bccb-02e907259154', customFields: '', excludeFolders: '', exclusionsSetting: 'global', failBuildOnNewResults: false, failBuildOnNewSeverity: 'HIGH', filterPattern: '''!**/_cvs/**/*, !**/.svn/**/*, !**/.hg/**/*, !**/.git/**/*, !**/.bzr/**/*,
         !**/.gitgnore/**/*, !**/.gradle/**/*, !**/.checkstyle/**/*, !**/.classpath/**/*, !**/bin/**/*,
         !**/obj/**/*, !**/backup/**/*, !**/.idea/**/*, !**/*.DS_Store, !**/*.ipr, !**/*.iws,
         !**/*.bak, !**/*.tmp, !**/*.aac, !**/*.aif, !**/*.iff, !**/*.m3u, !**/*.mid, !**/*.mp3,
@@ -21,32 +46,10 @@ pipeline {
         !**/*.bin,!**/*.lock,!**/*.svg,!**/*.obj,
         !**/*.stml, !**/*.ttml, !**/*.txn, !**/*.xhtm, !**/*.xhtml, !**/*.class, !**/*.iml, !Checkmarx/Reports/*.*,
         !OSADependencies.json, !**/node_modules/**/*''', fullScanCycle: 10, password: '{AQAAABAAAAAQuNGYCRPArlBR+H0h74jsRajPIVGbRuv2nSuMOYljV9s=}', projectName: 'WarningPipe', sastEnabled: true, serverUrl: 'http://localhost:8080', sourceEncoding: 'Provide Checkmarx server credentials to see source encodings list', useOwnServerCredentials: true, username: '', vulnerabilityThresholdResult: 'FAILURE', waitForResultsEnabled: true])
-    
-    stages {
-        stage('GitHub') {
-            options {
-                timeout(time: 1, unit: 'MINUTES')
-            }
-            steps {
-                script {
-                    env.URL = input message: 'Place your Github Repository here:', parameters: [string(defaultValue: '', name: 'Repository URL')]
-                }
-                git "${env.URL}"
-                //snykSecurity additionalArguments: '-d', snykInstallation: 'Snyk', snykTokenId: '813bd878-dd5a-414c-b3e4-d7e300a5f2f1'
-                dependencyCheck additionalArguments: '--scan pom.xml --out /dcheck_reports', odcInstallation: 'Dependency-Check'
-
-            }
-        }
-        
-        stage('Build') {
-            steps {
-                sh 'mvn package'
-                sh 'mvn install checkstyle:checkstyle findbugs:findbugs pmd:pmd'
-            }
-        }
-        
-        stage('Test') {
+            
             steps{
+                
+                
                 withSonarQubeEnv('SonarQube') { 
         // If you have configured more than one global server connection, you can specify its name
         //      sh "${scannerHome}/bin/sonar-scanner"
@@ -56,8 +59,8 @@ pipeline {
                     enabledForFailure: true, aggregatingResults: true, 
                     tools: [java(), checkStyle(), findBugs(), pmdParser()]
                 )
-                sh 'contrast auth'
-                sh 'contrast scan'
+                //h 'contrast auth'
+                //sh 'contrast scan'
             }
         }
         
