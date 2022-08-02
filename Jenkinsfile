@@ -57,7 +57,6 @@ pipeline {
                 dir("/apache-jmeter-5.5/bin"){
                     sh "./jenkinsreport.sh"
                 }
-                sh 'curl http://localhost:8081/mvnwebapp -o /test_reports/MyLog.txt'
             }
         }            
     }
