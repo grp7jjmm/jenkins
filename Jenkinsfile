@@ -26,7 +26,7 @@ pipeline {
         
         stage('Build') {
             steps {
-                sh 'mvn compile war:war'
+                sh 'mvn package'
                 sh 'mvn install checkstyle:checkstyle findbugs:findbugs pmd:pmd'
             }
         }
