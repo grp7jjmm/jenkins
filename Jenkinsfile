@@ -50,13 +50,14 @@ pipeline {
         
         stage('Release') {
             steps {
-                deploy adapters: [tomcat8(credentialsId: '9d2180bc-6df6-4e09-ae05-2a5ca9e590ca', path: '', url: 'http://127.0.0.1:8081/')], contextPath: 'mvnwebapp', onFailure: false, war: '**/*.war'
+                deploy adapters: [tomcat8(credentialsId: '9d2180bc-6df6-4e09-ae05-2a5ca9e590ca', path: '', url: 'http://localhost:8081/')], contextPath: 'mvnwebapp', onFailure: false, war: '**/*.war'
                 script{
                     currentBuild.keepLog = true
                 }
                 dir("/apache-jmeter-5.5/bin"){
                     sh "./jenkinsreport.sh"
                 }
+                sh 'curl http://localhost:8081/mvnwebapp -o /MyLog.txt'
             }
         }            
     }
