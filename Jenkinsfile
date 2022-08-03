@@ -18,7 +18,7 @@ pipeline {
                     env.URL = input message: 'Place your Github Repository here:', parameters: [string(defaultValue: '', name: 'Repository URL')]
                 }
                 git "${env.URL}"
-                snykSecurity additionalArguments: '-d', snykInstallation: 'Snyk', snykTokenId: '813bd878-dd5a-414c-b3e4-d7e300a5f2f1'
+                snykSecurity additionalArguments: '-d', failOnError: false, failOnIssues: false, snykInstallation: 'Snyk', snykTokenId: '813bd878-dd5a-414c-b3e4-d7e300a5f2f1'
                 dependencyCheck additionalArguments: '--scan pom.xml --out /dcheck_reports', odcInstallation: 'Dependency-Check'
 
             }
