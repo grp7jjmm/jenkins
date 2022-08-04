@@ -44,8 +44,6 @@ pipeline {
                     enabledForFailure: true, aggregatingResults: true, 
                     tools: [java(), checkStyle(), findBugs(), pmdParser()]
                 )
-                //sh 'contrast auth'
-                //sh 'contrast scan'
             }
         }
         
