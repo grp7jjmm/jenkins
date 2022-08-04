@@ -29,6 +29,7 @@ pipeline {
                     sh "./mvn_war.sh"
                 }
                 sh 'mvn package'
+                fingerprint '**/*.war'
                 sh 'mvn install checkstyle:checkstyle findbugs:findbugs pmd:pmd'
             }
         }
