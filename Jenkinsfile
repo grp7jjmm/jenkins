@@ -49,6 +49,7 @@ pipeline {
         
         stage('Release') {
             steps {
+                fingerprint '**/*.war'
                 deploy adapters: [tomcat8(credentialsId: '9d2180bc-6df6-4e09-ae05-2a5ca9e590ca', path: '', url: 'http://localhost:8081/')], contextPath: 'mvnwebapp', onFailure: false, war: '**/*.war'
                 dir("/apache-jmeter-5.5/bin"){
                     sh "./jenkinsreport.sh"
