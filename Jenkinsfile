@@ -24,18 +24,17 @@ pipeline {
         stage('Build') {
             steps {
                 snykSecurity additionalArguments: '-d', failOnError: false, failOnIssues: false, snykInstallation: 'Snyk', snykTokenId: '813bd878-dd5a-414c-b3e4-d7e300a5f2f1'
-                dependencyCheck additionalArguments: '--scan pom.xml --out /dcheck_reports', odcInstallation: 'Dependency-Check'
+                dependencyCheck additionalArguments: '--scan pom.xml --out /jenkins-reports/dependency-check', odcInstallation: 'Dependency-Check'
                 dir ("/var/lib/jenkins/workspace/Input/target"){
                     sh "./mvn_war.sh"
                 }
-                sh 'mvn package'
+                sh 'mvn compile war:war'
                 fingerprint '**/*.war'
                 sh 'mvn install checkstyle:checkstyle findbugs:findbugs pmd:pmd'
             }
         }
         
         stage('Test') {
-               
             steps{
                 withSonarQubeEnv('SonarQube') { 
                     sh "mvn sonar:sonar"
