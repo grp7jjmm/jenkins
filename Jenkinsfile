@@ -53,7 +53,6 @@ pipeline {
                 dir("/apache-jmeter-5.5/bin"){
                     sh "./jenkinsreport.sh"
                 }
-                echo "Test"
             }
         }            
     }
