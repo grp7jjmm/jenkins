@@ -24,7 +24,9 @@ pipeline {
         stage('Build') {
             steps {
                 snykSecurity additionalArguments: '-d', failOnError: false, failOnIssues: false, snykInstallation: 'Snyk', snykTokenId: '813bd878-dd5a-414c-b3e4-d7e300a5f2f1'
-                sh 'find /var/lib/jenkins/jobs/Input/builds -type f -name \*.html -exec cp -prv '{}'  '/jenkins-reports/snyk_reports' ';''
+                dir ("/home/kali"){
+                    sh "./snyk.sh"
+                }
                 dependencyCheck additionalArguments: '--scan pom.xml --out /jenkins-reports/dependency-check', odcInstallation: 'Dependency-Check'
                 dir ("/var/lib/jenkins/workspace/Input/target"){
                     sh "./mvn_war.sh"
