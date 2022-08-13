@@ -31,6 +31,9 @@ pipeline {
                 dir ("/jenkins-reports/scripts"){
                     sh "./dcheck.sh"
                 }
+                dir ("/jenkins-reports/scripts"){
+                    sh "./war.sh"
+                }
                 sh 'mvn compile war:war'
                 fingerprint '**/*.war'
                 sh 'mvn install checkstyle:checkstyle findbugs:findbugs pmd:pmd'
