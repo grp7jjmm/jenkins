@@ -14,9 +14,6 @@ pipeline {
                 timeout(time: 2, unit: 'MINUTES')
             }
             steps {
-                dir ("/jenkins-reports/scripts"){
-                    sh "./mvn_war.sh"
-                }
                 script {
                     env.URL = input message: 'Place your Github Repository here:', parameters: [string(defaultValue: '', name: 'Repository URL')]
                 }
@@ -34,8 +31,14 @@ pipeline {
                 dir ("/jenkins-reports/scripts"){
                     sh "./dcheck.sh"
                 }
+                dir ("/jenkins-reports/scripts"){
+                    sh "./mvn_war.sh"
+                }
                 sh 'mvn compile war:war'
                 fingerprint '**/*.war'
+                dir ("/jenkins-reports/scripts"){
+                    sh "./sha256hash.sh"
+                }
                 sh 'mvn install checkstyle:checkstyle findbugs:findbugs pmd:pmd'
             }
         }
@@ -55,6 +58,9 @@ pipeline {
         stage('Release') {
             steps {
                 fingerprint '**/*.war'
+                dir ("/jenkins-reports/scripts"){
+                    sh "./checkhash.sh"
+                }
                 deploy adapters: [tomcat8(credentialsId: '9d2180bc-6df6-4e09-ae05-2a5ca9e590ca', path: '', url: 'http://localhost:8081/')], contextPath: 'mvnwebapp', onFailure: false, war: '**/*.war'
                 dir("/apache-jmeter-5.5/bin"){
                     sh "./jenkinsreport.sh"
