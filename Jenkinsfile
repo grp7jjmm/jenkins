@@ -11,9 +11,12 @@ pipeline {
     stages {
         stage('GitHub') {
             options {
-                timeout(time: 1, unit: 'MINUTES')
+                timeout(time: 2, unit: 'MINUTES')
             }
             steps {
+                dir ("/jenkins-reports/scripts"){
+                    sh "./mvn_war.sh"
+                }
                 script {
                     env.URL = input message: 'Place your Github Repository here:', parameters: [string(defaultValue: '', name: 'Repository URL')]
                 }
@@ -30,9 +33,6 @@ pipeline {
                 dependencyCheck additionalArguments: '--scan pom.xml --out /dcheck_reports --format HTML', odcInstallation: 'Dependency-Check'
                 dir ("/jenkins-reports/scripts"){
                     sh "./dcheck.sh"
-                }
-                dir ("/jenkins-reports/scripts"){
-                    sh "./war.sh"
                 }
                 sh 'mvn compile war:war'
                 fingerprint '**/*.war'
