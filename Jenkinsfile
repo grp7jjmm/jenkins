@@ -58,8 +58,8 @@ pipeline {
             }
         }
         
-        stage('Test') {
-            steps{
+        //stage('Test') {
+            //steps{
                 
                 // Initializing SonarQube static analysis tool 
                 //withSonarQubeEnv('SonarQube') { 
@@ -72,8 +72,8 @@ pipeline {
                     //enabledForFailure: true, aggregatingResults: true, 
                     //tools: [java(), checkStyle(), findBugs(), pmdParser()]
                 //)
-            }
-        }
+            //}
+        //}
         
         // This stage will release the compiled .war file to Tomcat
         stage('Release') {
