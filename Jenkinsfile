@@ -35,10 +35,10 @@ pipeline {
             steps {
                 
                 // Snyk and DependencyCheck will scan the source code of the project for vulnerabilities and unneccesary dependencies
-                //snykSecurity additionalArguments: '-d', failOnError: false, failOnIssues: false, snykInstallation: 'Snyk', snykTokenId: '813bd878-dd5a-414c-b3e4-d7e300a5f2f1'
-                //dir ("/jenkins-reports/scripts"){
-                    //sh "./snyk.sh"
-                //}
+                snykSecurity additionalArguments: '-d', failOnError: false, failOnIssues: false, snykInstallation: 'Snyk', snykTokenId: '813bd878-dd5a-414c-b3e4-d7e300a5f2f1'
+                dir ("/jenkins-reports/scripts"){
+                    sh "./snyk.sh"
+                }
                 dependencyCheck additionalArguments: '--scan pom.xml --out /dcheck_reports --format HTML', odcInstallation: 'Dependency-Check'
                 dir ("/jenkins-reports/scripts"){
                     sh "./dcheck.sh"
@@ -80,17 +80,17 @@ pipeline {
             steps {
                 
                 // Checking if the .war file created is still the legitimate one from the Build Stage.
-                //fingerprint '**/*.war'
+                fingerprint '**/*.war'
                 
-                dir ("/jenkins-reports/scripts"){
-                    sh "./checkhash.sh"  
-                }
-                //script{
-                    //exit = sh(script: "/jenkins-reports/scripts/checkhash.sh", returnStatus: true)
-                    //if (exit == 0) {
-                        //currentBuild.result = 'FAILURE'
-                    //}
+                //dir ("/jenkins-reports/scripts"){
+                    //sh "./checkhash.sh"  
                 //}
+                script{
+                    check = sh(script: "/jenkins-reports/scripts/checkhash.sh", returnStatus: true)
+                    if (check == 0) {
+                        currentBuild.result = 'FAILURE'
+                    }
+                }
                 
                 // Deploying the .war file to Tomcat (port 8081) 
                 deploy adapters: [tomcat8(credentialsId: '9d2180bc-6df6-4e09-ae05-2a5ca9e590ca', path: '', url: 'http://localhost:8081/')], contextPath: 'mvnwebapp', onFailure: false, war: '**/*.war'
