@@ -106,7 +106,7 @@ pipeline {
                     sh "./jenkinsreport.sh"
                 }
                 
-                echo "If you would like to see the reports of the various security tools, you can find them here -> "
+                echo "If you would like to see the reports of the various security tools, you can find them here -> file:///jenkins-reports/index.html"
             }
         }            
     }
