@@ -62,15 +62,15 @@ pipeline {
             steps{
                 
                 // Initializing SonarQube static analysis tool 
-                withSonarQubeEnv('SonarQube') { 
-                    sh "mvn sonar:sonar"
-                }
+                //withSonarQubeEnv('SonarQube') { 
+                    //sh "mvn sonar:sonar"
+                //}
                 
                 // Initializing the plugins of the WarningNextGen security tool for hybrid analysis
-                sh 'mvn install checkstyle:checkstyle findbugs:findbugs pmd:pmd'
-                recordIssues(
-                    enabledForFailure: true, aggregatingResults: true, 
-                    tools: [java(), checkStyle(), findBugs(), pmdParser()]
+                //sh 'mvn install checkstyle:checkstyle findbugs:findbugs pmd:pmd'
+                //recordIssues(
+                    //enabledForFailure: true, aggregatingResults: true, 
+                    //tools: [java(), checkStyle(), findBugs(), pmdParser()]
                 )
             }
         }
