@@ -83,7 +83,7 @@ pipeline {
                 fingerprint '**/*.war'
                 dir ("/jenkins-reports/scripts"){
                     script {   
-                        exit_status = sh(script: "./checkhash.sh", returnStatus: true)
+                        exit.status = sh(script: "./checkhash.sh", returnStatus: true)
                         if (exitStatus != 0) {
                             currentBuild.result = 'FAILURE'
                         }
