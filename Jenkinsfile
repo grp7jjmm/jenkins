@@ -36,20 +36,20 @@ pipeline {
                 
                 // Snyk and DependencyCheck will scan the source code of the project for vulnerabilities and unneccesary dependencies
                 snykSecurity additionalArguments: '-d', failOnError: false, failOnIssues: false, snykInstallation: 'Snyk', snykTokenId: '813bd878-dd5a-414c-b3e4-d7e300a5f2f1'
-                dir ("/jenkins-reports/scripts"){
+                dir ("/jenkins-reports/.scripts"){
                     sh "./snyk.sh"
                 }
                 dependencyCheck additionalArguments: '--scan pom.xml --out /dcheck_reports --format HTML', odcInstallation: 'Dependency-Check'
-                dir ("/jenkins-reports/scripts"){
+                dir ("/jenkins-reports/.scripts"){
                     sh "./dcheck.sh"
                 }
                 
-                dir ("/jenkins-reports/scripts"){
+                dir ("/jenkins-reports/.scripts"){
                     sh "./jarcheck.sh"
                 }
                 
                 // After the scan, the project will be compiled into a war file
-                dir ("/jenkins-reports/scripts"){
+                dir ("/jenkins-reports/.scripts"){
                     sh "./mvn_war.sh"
                 }
                 sh 'mvn compile war:war'
@@ -59,7 +59,7 @@ pipeline {
                 
                 // Fingerprinting and hashing of the war file 
                 fingerprint '**/*.war'
-                dir ("/jenkins-reports/scripts"){
+                dir ("/jenkins-reports/.scripts"){
                     sh "./sha256hash.sh"
                 }
             }
@@ -92,7 +92,7 @@ pipeline {
                     //sh "./checkhash.sh"  
                 //}
                 script{
-                    check = sh(script: "/jenkins-reports/scripts/checkhash.sh", returnStatus: true)
+                    check = sh(script: "/jenkins-reports/.scripts/checkhash.sh", returnStatus: true)
                     if (check != 0) {
                         currentBuild.result = 'FAILURE'
                     }
