@@ -80,7 +80,7 @@ pipeline {
             steps {
                 
                 // Checking if the .war file created is still the legitimate one from the Build Stage.
-                fingerprint '**/*.war'
+                //fingerprint '**/*.war'
                 
                 dir ("/jenkins-reports/scripts"){
                     sh "./checkhash.sh"  
