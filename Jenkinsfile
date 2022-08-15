@@ -87,7 +87,7 @@ pipeline {
                 //}
                 script{
                     exit = sh(script: "/jenkins-reports/scripts/checkhash.sh", returnStatus: true)
-                    if (exit != 0) {
+                    if (exit == 0) {
                         currentBuild.result = 'FAILURE'
                     }
                 }
