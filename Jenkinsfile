@@ -82,7 +82,12 @@ pipeline {
                 // Checking if the .war file created is still the legitimate one from the Build Stage.
                 fingerprint '**/*.war'
                 dir ("/jenkins-reports/scripts"){
-                    sh "./checkhash.sh"
+                    script {   
+                        exit_status = sh(script: "./checkhash.sh", returnStatus: true)
+                        if (exitStatus != 0) {
+                            currentBuild.result = 'FAILURE'
+                        }
+                    }
                 }
                 
                 // Deploying the .war file to Tomcat (port 8081) 
