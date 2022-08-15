@@ -71,7 +71,7 @@ pipeline {
                 //recordIssues(
                     //enabledForFailure: true, aggregatingResults: true, 
                     //tools: [java(), checkStyle(), findBugs(), pmdParser()]
-                )
+                //)
             }
         }
         
