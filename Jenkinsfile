@@ -50,6 +50,8 @@ pipeline {
                 }
                 sh 'mvn compile war:war'
                 
+                sh 'mvn install checkstyle:checkstyle findbugs:findbugs pmd:pmd'
+                
                 // Fingerprinting and hashing of the war file 
                 fingerprint '**/*.war'
                 dir ("/jenkins-reports/scripts"){
@@ -58,22 +60,21 @@ pipeline {
             }
         }
         
-        //stage('Test') {
-            //steps{
+        stage('Test') {
+            steps{
                 
                 // Initializing SonarQube static analysis tool 
-                //withSonarQubeEnv('SonarQube') { 
-                    //sh "mvn sonar:sonar"
-                //}
+                withSonarQubeEnv('SonarQube') { 
+                    sh "mvn sonar:sonar"
+                }
                 
                 // Initializing the plugins of the WarningNextGen security tool for hybrid analysis
-                //sh 'mvn install checkstyle:checkstyle findbugs:findbugs pmd:pmd'
-                //recordIssues(
-                    //enabledForFailure: true, aggregatingResults: true, 
-                    //tools: [java(), checkStyle(), findBugs(), pmdParser()]
-                //)
-            //}
-        //}
+                recordIssues(
+                    enabledForFailure: true, aggregatingResults: true, 
+                    tools: [java(), checkStyle(), findBugs(), pmdParser()]
+                )
+            }
+        }
         
         // This stage will release the compiled .war file to Tomcat
         stage('Release') {
