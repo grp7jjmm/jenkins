@@ -44,12 +44,17 @@ pipeline {
                     sh "./dcheck.sh"
                 }
                 
+                dir ("/jenkins-reports/scripts"){
+                    sh "./jarcheck.sh"
+                }
+                
                 // After the scan, the project will be compiled into a war file
                 dir ("/jenkins-reports/scripts"){
                     sh "./mvn_war.sh"
                 }
                 sh 'mvn compile war:war'
                 
+                // Install WarningNextGen plugins for Testing stage
                 sh 'mvn install checkstyle:checkstyle findbugs:findbugs pmd:pmd'
                 
                 // Fingerprinting and hashing of the war file 
