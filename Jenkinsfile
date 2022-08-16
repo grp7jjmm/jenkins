@@ -88,9 +88,7 @@ pipeline {
                 // Checking if the .war file created is still the legitimate one from the Build Stage.
                 fingerprint '**/*.war'
                 
-                //dir ("/jenkins-reports/scripts"){
-                    //sh "./checkhash.sh"  
-                //}
+                // The build will fail if the hash values do not match
                 script{
                     check = sh(script: "/jenkins-reports/.scripts/checkhash.sh", returnStatus: true)
                     if (check != 0) {
