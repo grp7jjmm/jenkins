@@ -44,6 +44,7 @@ pipeline {
                     sh "./dcheck.sh"
                 }
                 
+                // This script runs the .jar file dependency check
                 dir ("/jenkins-reports/.scripts"){
                     sh "./jarcheck.sh"
                 }
@@ -52,6 +53,8 @@ pipeline {
                 dir ("/jenkins-reports/.scripts"){
                     sh "./mvn_war.sh"
                 }
+                
+                // Compiling the client's project into a .war file
                 sh 'mvn compile war:war'
                 
                 // Install WarningNextGen plugins for Testing stage
@@ -104,6 +107,7 @@ pipeline {
                     sh "./jenkinsreport.sh"
                 }
                 
+                // Link to the main HTML report
                 echo "If you would like to see the reports of the various security tools, you can find them here -> file:///jenkins-reports/index.html"
             }
         }            
