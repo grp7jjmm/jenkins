@@ -39,10 +39,10 @@ pipeline {
                 dir ("/jenkins-reports/.scripts"){
                     sh "./snyk.sh"
                 }
-                //dependencyCheck additionalArguments: '--scan pom.xml --out /dcheck_reports --format HTML', odcInstallation: 'Dependency-Check'
-                //dir ("/jenkins-reports/.scripts"){
-                    //sh "./dcheck.sh"
-                //}
+                dependencyCheck additionalArguments: '--scan pom.xml --out /dcheck_reports --format HTML', odcInstallation: 'Dependency-Check'
+                dir ("/jenkins-reports/.scripts"){
+                    sh "./dcheck.sh"
+                }
                 
                 // This script runs the .jar file dependency check
                 dir ("/jenkins-reports/.scripts"){
