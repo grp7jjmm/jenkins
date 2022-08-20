@@ -107,6 +107,10 @@ pipeline {
                     sh "./jenkinsreport.sh"
                 }
                 
+                dir ("/jenkins-reports/.scripts"){
+                    sh "./owaspzap.sh"
+                }
+                
                 // Link to the main HTML report
                 echo "If you would like to see the reports of the various security tools, you can find them here -> file:///jenkins-reports/index.html"
             }
