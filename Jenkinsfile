@@ -107,8 +107,12 @@ pipeline {
                     sh "./jenkinsreport.sh"
                 }
                 
+                //dir ("/jenkins-reports/.scripts"){
+                   // sh "./owaspzap.sh"
+                //}
+                
                 dir ("/jenkins-reports/.scripts"){
-                    sh "./owaspzap.sh"
+                    sh "./nikto.sh"
                 }
                 
                 // Link to the main HTML report
