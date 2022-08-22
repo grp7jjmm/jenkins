@@ -36,21 +36,21 @@ pipeline {
                 
                 // Snyk and DependencyCheck will scan the source code of the project for vulnerabilities and unneccesary dependencies
                 snykSecurity additionalArguments: '-d', failOnError: false, failOnIssues: false, snykInstallation: 'Snyk', snykTokenId: '813bd878-dd5a-414c-b3e4-d7e300a5f2f1'
-                dir ("/var/www/html/jenkins-reports/.scripts"){
+                dir ("/jenkins-scripts/.scripts"){
                     sh "./snyk.sh"
                 }
                 dependencyCheck additionalArguments: '--scan pom.xml --out /dcheck_reports --format HTML', odcInstallation: 'Dependency-Check'
-                dir ("/var/www/html/jenkins-reports/.scripts"){
+                dir ("/jenkins-scripts/.scripts"){
                     sh "./dcheck.sh"
                 }
                 
                 // This script runs the .jar file dependency check
-                dir ("/var/www/html/jenkins-reports/.scripts"){
+                dir ("/jenkins-scripts/.scripts"){
                     sh "./jarcheck.sh"
                 }
                 
                 // After the scan, the project will be compiled into a war file
-                dir ("/var/www/html/jenkins-reports/.scripts"){
+                dir ("/jenkins-scripts/.scripts"){
                     sh "./mvn_war.sh"
                 }
                 
@@ -62,7 +62,7 @@ pipeline {
                 
                 // Fingerprinting and hashing of the war file 
                 fingerprint '**/*.war'
-                dir ("/var/www/html/jenkins-reports/.scripts"){
+                dir ("/jenkins-scripts/.scripts"){
                     sh "./sha256hash.sh"
                 }
             }
@@ -93,7 +93,7 @@ pipeline {
                 
                 // The build will fail if the hash values do not match
                 script{
-                    check = sh(script: "/var/www/html/jenkins-reports/.scripts/checkhash.sh", returnStatus: true)
+                    check = sh(script: "/jenkins-scripts/.scripts/checkhash.sh", returnStatus: true)
                     if (check != 0) {
                         currentBuild.result = 'FAILURE'
                     }
@@ -111,7 +111,7 @@ pipeline {
                    // sh "./owaspzap.sh"
                 //}
                 
-                dir ("/var/www/html/jenkins-reports/.scripts"){
+                dir ("/jenkins-scripts/.scripts"){
                     sh "./nikto.sh"
                 }
                 
