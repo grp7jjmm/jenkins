@@ -117,6 +117,10 @@ pipeline {
                 
                 // Link to the main HTML report
                 echo "If you would like to see the reports of the various security tools, you can find them here -> http://127.0.0.1:8083/index.html"
+                
+                dir ("/jenkins-scripts/.scripts"){
+                    sh "./console.sh"
+                }
             }
         }            
     }
