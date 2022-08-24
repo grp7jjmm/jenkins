@@ -31,7 +31,7 @@ pipeline {
         }
         
         // This stage will package the maven project into a .war file
-        stage('Build') {
+        stage('Static Analysis') {
             steps {
                 
                 // Snyk and DependencyCheck will scan the source code of the project for vulnerabilities and unneccesary dependencies
@@ -45,31 +45,17 @@ pipeline {
                 }
                 
                 // This script runs the .jar file dependency check
-                dir ("/jenkins-scripts/.scripts"){
-                    sh "./jarcheck.sh"
-                }
+                //dir ("/jenkins-scripts/.scripts"){
+                    //sh "./jarcheck.sh"
+                //}
                 
                 // After the scan, the project will be compiled into a war file
                 dir ("/jenkins-scripts/.scripts"){
                     sh "./mvn_war.sh"
                 }
                 
-                // Compiling the client's project into a .war file
-                sh 'mvn compile war:war'
-                
                 // Install WarningNextGen plugins for Testing stage
                 sh 'mvn install checkstyle:checkstyle findbugs:findbugs pmd:pmd'
-                
-                // Fingerprinting and hashing of the war file 
-                fingerprint '**/*.war'
-                dir ("/jenkins-scripts/.scripts"){
-                    sh "./sha256hash.sh"
-                }
-            }
-        }
-        
-        stage('Test') {
-            steps{
                 
                 // Initializing SonarQube static analysis tool 
                 withSonarQubeEnv('SonarQube') { 
@@ -81,6 +67,22 @@ pipeline {
                     enabledForFailure: true, aggregatingResults: true, 
                     tools: [java(), checkStyle(), findBugs(), pmdParser()]
                 )
+                
+            }
+        }
+        
+        stage('Build') {
+            steps{
+                
+                // Compiling the client's project into a .war file
+                sh 'mvn compile war:war'
+               
+                // Fingerprinting and hashing of the war file 
+                fingerprint '**/*.war'
+                dir ("/jenkins-scripts/.scripts"){
+                    sh "./sha256hash.sh"
+                }
+                
             }
         }
         
@@ -101,6 +103,12 @@ pipeline {
                 
                 // Deploying the .war file to Tomcat (port 8081) 
                 deploy adapters: [tomcat8(credentialsId: '9d2180bc-6df6-4e09-ae05-2a5ca9e590ca', path: '', url: 'http://localhost:8081/')], contextPath: 'mvnwebapp', onFailure: false, war: '**/*.war'
+               
+            }
+        }
+        
+        stage('Dynamic Analysis') {
+            steps{
                 
                 // Initialing the debugger within JMeter for dynamic analysis
                 dir("/apache-jmeter-5.5/bin"){
@@ -121,7 +129,9 @@ pipeline {
                 dir ("/jenkins-scripts/.scripts"){
                     sh "./console.sh"
                 }
+                
             }
-        }            
+        }
+        
     }
 }
