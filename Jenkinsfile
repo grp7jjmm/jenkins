@@ -39,14 +39,9 @@ pipeline {
                 dir ("/jenkins-scripts/.scripts"){
                     sh "./snyk.sh"
                 }
-                dependencyCheck additionalArguments: '--scan pom.xml --out /dcheck_reports --format HTML', odcInstallation: 'Dependency-Check'
-                dir ("/jenkins-scripts/.scripts"){
-                    sh "./dcheck.sh"
-                }
-                
-                // This script runs the .jar file dependency check
+                //dependencyCheck additionalArguments: '--scan pom.xml --out /dcheck_reports --format HTML', odcInstallation: 'Dependency-Check'
                 //dir ("/jenkins-scripts/.scripts"){
-                    //sh "./jarcheck.sh"
+                    //sh "./dcheck.sh"
                 //}
                 
                 // After the scan, the project will be compiled into a war file
