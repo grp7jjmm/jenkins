@@ -105,22 +105,23 @@ pipeline {
         stage('Dynamic Analysis') {
             steps{
                 
-                // Initialing the debugger within JMeter for dynamic analysis
+                // Initialing the debugger within JMeter
                 dir("/apache-jmeter-5.5/bin"){
                     sh "./jenkinsreport.sh"
                 }
                 
-                //dir ("/jenkins-reports/.scripts"){
-                   // sh "./owaspzap.sh"
-                //}
-                
+                // Execute Nikto for Network Scanning 
                 dir ("/jenkins-scripts/.scripts"){
                     sh "./nikto.sh"
                 }
                 
+                // Link to Client's Web Application
+                echo "If you would like to see your released Web Application, you can find it here -> http://localhost:8081/mvnwebapp"
+                
                 // Link to the main HTML report
                 echo "If you would like to see the reports of the various security tools, you can find them here -> http://127.0.0.1:8083/reports.php"
                 
+                // Copying the console output to the reports page
                 dir ("/jenkins-scripts/.scripts"){
                     sh "./console.sh"
                 }
