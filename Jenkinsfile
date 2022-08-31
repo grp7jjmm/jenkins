@@ -116,7 +116,7 @@ pipeline {
                 }
                 
                 // Link to Client's Web Application
-                echo "If you would like to see your released Web Application, you can find it here -> http://localhost:8081/mvnwebapp"
+                echo "If you would like to see your released Web Application, you can find it here -> http://127.0.0.1:8081/mvnwebapp"
                 
                 // Link to the main HTML report
                 echo "If you would like to see the reports of the various security tools, you can find them here -> http://127.0.0.1:8083/reports.php"
