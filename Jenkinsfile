@@ -30,41 +30,6 @@ pipeline {
             }
         }
         
-        // This stage will package the maven project into a .war file
-        stage('Static Analysis') {
-            steps {
-                
-                // Snyk and DependencyCheck will scan the source code of the project for vulnerabilities and unneccesary dependencies
-                snykSecurity additionalArguments: '-d', failOnError: false, failOnIssues: false, snykInstallation: 'Snyk', snykTokenId: '813bd878-dd5a-414c-b3e4-d7e300a5f2f1'
-                dir ("/jenkins-scripts/.scripts"){
-                    sh "./snyk.sh"
-                }
-                dependencyCheck additionalArguments: '--scan pom.xml --out /dcheck_reports --format HTML', odcInstallation: 'Dependency-Check'
-                dir ("/jenkins-scripts/.scripts"){
-                    sh "./dcheck.sh"
-                }
-                
-                // After the scan, the project will be compiled into a war file
-                dir ("/jenkins-scripts/.scripts"){
-                    sh "./mvn_war.sh"
-                }
-                
-                // Install WarningNextGen plugins for Testing stage
-                sh 'mvn install checkstyle:checkstyle findbugs:findbugs pmd:pmd'
-                
-                // Initializing SonarQube static analysis tool 
-                withSonarQubeEnv('SonarQube') { 
-                    sh "mvn sonar:sonar"
-                }
-                
-                // Initializing the plugins of the WarningNextGen security tool for hybrid analysis
-                recordIssues(
-                    enabledForFailure: true, aggregatingResults: true, 
-                    tools: [java(), checkStyle(), findBugs(), pmdParser()]
-                )
-                
-            }
-        }
         
         stage('Build') {
             steps{
@@ -102,32 +67,7 @@ pipeline {
             }
         }
         
-        stage('Dynamic Analysis') {
-            steps{
-                
-                // Initialing the debugger within JMeter
-                dir("/apache-jmeter-5.5/bin"){
-                    sh "./jenkinsreport.sh"
-                }
-                
-                // Execute Nikto for Network Scanning 
-                dir ("/jenkins-scripts/.scripts"){
-                    sh "./nikto.sh"
-                }
-                
-                // Link to Client's Web Application
-                echo "If you would like to see your released Web Application, you can find it here -> http://127.0.0.1:8081/mvnwebapp"
-                
-                // Link to the main HTML report
-                echo "If you would like to see the reports of the various security tools, you can find them here -> http://127.0.0.1:8083/reports.php"
-                
-                // Copying the console output to the reports page
-                dir ("/jenkins-scripts/.scripts"){
-                    sh "./console.sh"
-                }
-                
-            }
-        }
+        
         
     }
 }
