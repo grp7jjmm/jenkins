@@ -39,9 +39,7 @@ pipeline {
                
                 // Fingerprinting and hashing of the war file 
                 fingerprint '**/*.war'
-                dir ("/jenkins-scripts/.scripts"){
-                    sh "./sha256hash.sh"
-                }
+                
                 
             }
         }
@@ -53,13 +51,7 @@ pipeline {
                 // Checking if the .war file created is still the legitimate one from the Build Stage.
                 fingerprint '**/*.war'
                 
-                // The build will fail if the hash values do not match
-                script{
-                    check = sh(script: "/jenkins-scripts/.scripts/checkhash.sh", returnStatus: true)
-                    if (check != 0) {
-                        currentBuild.result = 'FAILURE'
-                    }
-                }
+                
                 
                 // Deploying the .war file to Tomcat (port 8081) 
                 deploy adapters: [tomcat8(credentialsId: '9d2180bc-6df6-4e09-ae05-2a5ca9e590ca', path: '', url: 'http://localhost:8081/')], contextPath: 'mvnwebapp', onFailure: false, war: '**/*.war'
